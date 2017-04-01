@@ -13,6 +13,10 @@
 # build into a centos7 container, and utilize all the necessary rhel7-level rpm from yum.
 # resulting topspin sw in this container works well in a centos 6 workstation
 # 
+## RPM (Berkeley) DB is okay, inside the centos7 container, yum works.
+## manually yum install eog adds 81 rpm, 42 MB of space, don't seems to replicate a 
+## whole new DB for rpm.  Centos7 rpm can read what was created from RHEL6.6 (bootstrap host).
+# 
 # ftp://ftp.bruker.de/pub/nmr/CentOS/7/TopSpinInstallationRequirements.html
 #
 # this .def file result in 1.3 GB image
@@ -31,13 +35,13 @@ Include: yum
     cat /opt/run_topspin.cmd 
 
 %post
-    STRUCTBIO_GID=19000
-    NMRSU_UID=19001
-    NMRSU_GID=19001
-    NMR_UID=19002
-    NMR_GID=19002
-    FLEXLM_UID=19003
-    FLEXLM_GID=19003
+    STRUCTBIO_GID=8000
+    NMRSU_UID=8001
+    NMRSU_GID=8001
+    NMR_UID=8002
+    NMR_GID=8002
+    FLEXLM_UID=8003
+    FLEXLM_GID=8003
     yum -y install bash
     yum -y install environment-modules
     # source /etc/profile.d/modules.sh # to get the "module command" to work
@@ -62,9 +66,10 @@ Include: yum
     groupadd -g $STRUCTBIO_GID sbio
     groupadd -g $NMRSU_GID     nmrsu
     groupadd -g $NMR_GID       nmr
-    useradd -d /export/home/nmrsu -m  -c "nmr super user"     -s /bin/bash -p '*place*your*shadow*entry*here*' -g $NMRSU_GID  -u $NMRSU_UID nmrsu
-    useradd -d /export/home/nmr   -m  -c "nmr user"           -s /bin/bash -p '*place*your*shadow*entry*here*' -g $NMR_GID    -u $NMR_UID nmr
-    useradd -d /nonexistent       -m  -c "FLEXlm License Mgr" -s /bin/bash -p '*LK*no*login*'               -U -g $FLEXLM_GID -u $FLEXLM_UID flexlm
+    groupadd -g $FLEXLM_GID    flexlm
+    useradd -d /export/home/nmrsu -m  -c "nmr super user"     -s /bin/bash -p '*place*your*shadow*entry*here*' -g $NMRSU_GID  -u $NMRSU_UID  nmrsu
+    useradd -d /export/home/nmr   -m  -c "nmr user"           -s /bin/bash -p '*place*your*shadow*entry*here*' -g $NMR_GID    -u $NMR_UID    nmr
+    useradd -d /nonexistent       -m  -c "FLEXlm License Mgr" -s /bin/bash -p '*LK*no*login*'                  -g $FLEXLM_GID -u $FLEXLM_UID flexlm
 
     # optional step: install additional fonts, without them topspin menu looks kinda ugly
     # done as add-on script as other container to host GUI program may use it as well
