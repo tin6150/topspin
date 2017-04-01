@@ -1,3 +1,6 @@
+#$ --size 3300
+#$ --debug
+#
 # CentOS 7 x86_64 container for Bruker Topspin
 # This container currently does *NOT* contain the topsin sw itself!
 # It only has all the needed dependencies, where the app can be installed
@@ -22,6 +25,7 @@
 # this .def file result in 1.3 GB image
 # topspin sw install will subsequently takes a lot of space.
 # recommended to create this image with 3200 MB to include all the fonts
+#
 #
 # *** Remember to adjust UID and GID numbers to your need ***
 

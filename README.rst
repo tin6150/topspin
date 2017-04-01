@@ -16,5 +16,5 @@ sudo -E $Singularity bootstrap topspin.img Singularity | tee sing.log 2>&1
 Ref:
 
 - https://github.com/tin6150/singhub/centos7_topspin.def
-- https://singularity-hub.org/collections/tba/
+- https://singularity-hub.org/collections/104/
 
