@@ -10,7 +10,7 @@ Creating containers (if not using Singularity Hub):
 Singularity=/usr/local/bin/singularity
 Singularity=/export/singularity/2.3/bin/singularity
 sudo    $Singularity create --size 3200 topspin.img
-sudo -E $Singularity bootstrap topspin.img Singularity | tee sing.log 2>&1 
+sudo -E $Singularity bootstrap topspin.img Singularity | tee sing_log.txt 2>&1 
 
 
 Ref:
