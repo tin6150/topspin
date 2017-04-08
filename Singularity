@@ -29,8 +29,12 @@
 #
 # *** Remember to adjust UID and GID numbers to your need ***
 
-BootStrap: yum
-OSVersion: 7
+BootStrap:docker
+From:centos:7
+
+#yum bootstrap works from a CentOS host, but not in Singularity-hub ~2017-04
+#BootStrap: yum
+#OSVersion: 7
 
 MirrorURL: http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/os/$basearch/
 Include: yum
