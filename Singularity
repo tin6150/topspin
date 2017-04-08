@@ -19,6 +19,7 @@
 ## RPM (Berkeley) DB is okay, inside the centos7 container, yum works.
 ## manually yum install eog adds 81 rpm, 42 MB of space, don't seems to replicate a 
 ## whole new DB for rpm.  Centos7 rpm can read what was created from RHEL6.6 (bootstrap host).
+## but eog, gedit don't work, throws DBus error.
 # 
 # ftp //ftp.bruker.de/pub/nmr/CentOS/7/TopSpinInstallationRequirements.html
 #
