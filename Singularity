@@ -71,7 +71,6 @@ Include: yum
     yum -y install epel-release
     yum -y install --enablerepo=bruker   bruker-topspin-environ
 
-    mkdir /nonexistent
     mkdir -p /export/home
     groupadd -g $STRUCTBIO_GID sbio
     groupadd -g $NMRSU_GID     nmrsu
@@ -80,10 +79,19 @@ Include: yum
     useradd -d /export/home/nmrsu -m  -c "nmr super user"     -s /bin/bash -p '*place*your*shadow*entry*here*' -g $NMRSU_GID  -u $NMRSU_UID  nmrsu
     useradd -d /export/home/nmr   -m  -c "nmr user"           -s /bin/bash -p '*place*your*shadow*entry*here*' -g $NMR_GID    -u $NMR_UID    nmr
     useradd -d /nonexistent       -m  -c "FLEXlm License Mgr" -s /bin/bash -p '*LK*no*login*'                  -g $FLEXLM_GID -u $FLEXLM_UID flexlm
+    #mkdir /nonexistent # not needed, done by useradd
 
-    # optional step -- Install additional fonts, without them topspin menu looks kinda ugly
-    # done as add-on script as other container to host GUI program may use it as well
-    wget -nc https://raw.githubusercontent.com/tin6150/singhub/master/fonts_addition.sh
+    # optional step -- Install additional fonts, without them 
+    # topspin menu looks kinda ugly
+    # done as add-on script as other container that host GUI program 
+    # may use it as well
+    wget --random-file=/var/log/lastlog -nc https://raw.githubusercontent.com/tin6150/singhub/master/fonts_addition.sh
+    # wget has problem with https 
+    # Could not seed PRNG; consider using --random-file.  
+    # Disabling SSL due to encountered errors.  
+    # ERROR: Aborting with RETVAL=255
+    # --random-file=/var/log/lastlog worked from centos host for bootstrap using docker
+    # can't use /var/log/messages.  /dev/urandom didn't work.
     bash fonts_addition.sh
 
     # next step is to run the topspin interactive install as root inside the container
