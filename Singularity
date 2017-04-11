@@ -1,5 +1,34 @@
 #$ --size 3300
 #$ --debug
+#
+# CentOS 7 x86_64 container for Bruker Topspin
+# This container currently does *NOT* contain the topsin sw itself!
+# It only has all the needed dependencies, where the app can be installed
+# manually via the GUI installer.
+# Will check with Bruker to see if they are okay for their app to be included.
+#
+# For example command to start topspin with this container, see
+# https //github.com/tin6150/singhub/start_topspin_from_container.sh
+# 
+# Adopted from https //github.com/singularityware/singularity/blob/master/examples/centos.def
+# def for container intended to hold NMR sw topspin 
+# this container can be bootstrapped from centos6
+# build into a centos7 container, and utilize all the necessary rhel7-level rpm from yum.
+# resulting topspin sw in this container works well in a centos 6 workstation
+# 
+## RPM (Berkeley) DB is okay, inside the centos7 container, yum works.
+## manually yum install eog adds 81 rpm, 42 MB of space, don't seems to replicate a 
+## whole new DB for rpm.  Centos7 rpm can read what was created from RHEL6.6 (bootstrap host).
+## but eog, gedit don't work, throws DBus error.
+# 
+# ftp //ftp.bruker.de/pub/nmr/CentOS/7/TopSpinInstallationRequirements.html
+#
+# this .def file result in 1.3 GB image
+# topspin sw install will subsequently takes a lot of space.
+# recommended to create this image with 3200 MB to include all the fonts
+#
+#
+# *** Remember to adjust UID and GID numbers to your need ***
 
 BootStrap:docker
 From:centos:7
@@ -23,7 +52,7 @@ Include: yum
     FLEXLM_UID=8003
     FLEXLM_GID=8003
     yum -y install bash
-    yum -y install vte-profile	
+    yum -y install vte-profile		
     yum -y install environment-modules
     yum -y install which
     yum -y install less
@@ -33,8 +62,8 @@ Include: yum
     yum -y install tar
     yum -y install gzip
     yum -y install vi
-    yum -y install util-linux-ng        # u/mount, etc
-    yum -y install openssh-clients      # to get scp
+    yum -y install util-linux-ng        
+    yum -y install openssh-clients     
     yum -y install xterm
 
     yum -y --nogpgcheck install ftp://ftp.bruker.de/pub/nmr/CentOS/7/Bruker-Addon/bruker-addon-latest.x86_64.rpm
@@ -49,7 +78,22 @@ Include: yum
     useradd -d /export/home/nmrsu -m  -c "nmr super user"     -s /bin/bash -p '*place*your*shadow*entry*here*' -g $NMRSU_GID  -u $NMRSU_UID  nmrsu
     useradd -d /export/home/nmr   -m  -c "nmr user"           -s /bin/bash -p '*place*your*shadow*entry*here*' -g $NMR_GID    -u $NMR_UID    nmr
     useradd -d /nonexistent       -m  -c "FLEXlm License Mgr" -s /bin/bash -p '*LK*no*login*'                  -g $FLEXLM_GID -u $FLEXLM_UID flexlm
+    #mkdir /nonexistent # not needed, done by useradd
 
+    # optional step -- Install additional fonts, without them 
+    # topspin menu looks kinda ugly
+    # done as add-on script as other container that host GUI program 
+    # may use it as well
     wget --random-file=/var/log/lastlog -nc https://raw.githubusercontent.com/tin6150/singhub/master/fonts_addition.sh
+    # wget has problem with https 
+    # Could not seed PRNG; consider using --random-file.  
+    # Disabling SSL due to encountered errors.  
+    # ERROR: Aborting with RETVAL=255
+    # --random-file=/var/log/lastlog worked from centos host for bootstrap using docker
+    # can't use /var/log/messages.  /dev/urandom didn't work.
     bash fonts_addition.sh
 
+    # next step is to run the topspin interactive install as root inside the container
+    # not included cuz it is commercial sw req license, and it is interactive GUI install.
+
+    echo "See http //github.com/tin6150/singhub/start_topspin_from_container.sh for example on starting topspin" > /opt/run_topspin.cmd
